@@ -1,8 +1,8 @@
 import "server-only";
 
-import { Redis } from "@upstash/redis";
-import { Ratelimit, Duration } from "@upstash/ratelimit";
 import { env } from "@/env";
+import { Duration, Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
 
 const redis = Redis.fromEnv();
 
