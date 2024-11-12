@@ -1,15 +1,21 @@
+import { LoaderIcon } from "lucide-react";
+import { Suspense } from "react";
+
+import Editor from "@/components/editor";
+import Feed from "@/components/feed";
 import { currentUser } from "@clerk/nextjs/server";
 
 export default async function HomePage() {
   const user = await currentUser();
 
   return (
-    <main className="flex justify-center">
-      {user ? (
-        <p>Hello {user.username}!</p>
-      ) : (
-        <p className="text-muted-foreground">You&apos;re not signed in!</p>
-      )}
+    <main className="flex flex-col items-center gap-4">
+      {user && <Editor />}
+      <Suspense
+        fallback={<LoaderIcon className="animate-spin text-muted-foreground" />}
+      >
+        <Feed />
+      </Suspense>
     </main>
   );
 }
