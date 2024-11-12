@@ -10,13 +10,15 @@ import { auth } from "@clerk/nextjs/server";
 
 import clerk from "./clerk";
 import { ratelimits } from "./ratelimit";
+import { z } from "zod";
+import { createPostSchema } from "@/lib/zod";
 
 export async function getPosts() {
   const headerStore = await headers();
   const ip = headerStore.get("x-forwarded-for") ?? "unknown";
 
   const { success } = await ratelimits.getPosts.limit(ip);
-  if (!success) throw Error("Too many requests! Please try again later.");
+  if (!success) throw Error("TOO_MANY_REQUESTS");
 
   const posts = await db
     .select()
@@ -39,18 +41,21 @@ export async function getPosts() {
   return Promise.all(promises);
 }
 
-export async function createPost({ content }: { content: string }) {
+export async function createPost(body: z.infer<typeof createPostSchema>) {
   const { userId } = await auth();
   if (!userId) throw Error("UNAUTHORIZED");
 
+  const fields = await createPostSchema.safeParseAsync(body);
+  if (!fields.success) throw Error("BAD_REQUEST");
+
   const { success } = await ratelimits.createPost.limit(userId);
-  if (!success) throw Error("Too many requests! Please try again later.");
+  if (!success) throw Error("TOO_MANY_REQUESTS");
 
   const [post] = await db
     .insert(schema.posts)
     .values({
       userId,
-      content,
+      content: fields.data.content,
     })
     .returning();
 
