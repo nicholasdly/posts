@@ -15,7 +15,10 @@ export default function Editor() {
   const handleSubmit = () => {
     startTransition(() => {
       const promise = createPost({ content: input });
-      toast.promise(promise, { error: "Something went wrong!" });
+      toast.promise(
+        promise.then(() => setInput("")),
+        { error: "Something went wrong!" },
+      );
     });
   };
 

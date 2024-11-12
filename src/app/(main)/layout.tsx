@@ -7,7 +7,7 @@ export default async function MainLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="mx-auto max-w-md p-4">
+    <div className="mx-auto max-w-lg p-4">
       <header className="mb-6 flex items-center justify-between">
         <h1 className="flex items-baseline gap-2">
           <span className="text-xl font-semibold">nicholasdly/posts</span>

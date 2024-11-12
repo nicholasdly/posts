@@ -1,14 +1,36 @@
-import { InferSelectModel } from "drizzle-orm";
+import Image from "next/image";
 
-import db from "@/db";
-import { posts } from "@/db/schema";
+import dayjs from "@/lib/dayjs";
+import { getPosts } from "@/server/actions";
 
-function Post(post: InferSelectModel<typeof posts>) {
-  return <article>{post.content}</article>;
+function Post(post: Awaited<ReturnType<typeof getPosts>>[number]) {
+  return (
+    <article className="flex flex-col gap-3 rounded-lg border p-3">
+      <div className="flex items-center gap-3">
+        <div className="relative size-12 overflow-hidden rounded-full">
+          <Image
+            src={post.author.image}
+            alt={`@${post.author.username}'s profile picture`}
+            width={48}
+            height={48}
+          />
+        </div>
+        <div className="flex flex-col">
+          <p className="font-semibold">{post.author.name}</p>
+          <p className="text-sm text-muted-foreground">
+            <span className="font-medium">@{post.author.username}</span>
+            &nbsp;•&nbsp;
+            <span>{dayjs(post.createdAt).fromNow()}</span>
+          </p>
+        </div>
+      </div>
+      <p className="whitespace-pre-line">{post.content}</p>
+    </article>
+  );
 }
 
 export default async function Feed() {
-  const posts = await db.query.posts.findMany({ limit: 50 });
+  const posts = await getPosts();
 
   if (posts.length === 0) {
     return (
@@ -20,7 +42,7 @@ export default async function Feed() {
   }
 
   return (
-    <section>
+    <section className="w-full space-y-3">
       {posts.map((post) => (
         <Post key={post.id} {...post} />
       ))}
