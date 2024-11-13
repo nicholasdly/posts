@@ -3,15 +3,15 @@
 import { desc } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { z } from "zod";
 
 import db from "@/db";
 import * as schema from "@/db/schema";
+import { createPostSchema } from "@/lib/zod";
 import { auth } from "@clerk/nextjs/server";
 
 import clerk from "./clerk";
 import { ratelimits } from "./ratelimit";
-import { z } from "zod";
-import { createPostSchema } from "@/lib/zod";
 
 export async function getPosts() {
   const headerStore = await headers();
