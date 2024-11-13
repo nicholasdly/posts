@@ -20,14 +20,24 @@ export async function getPosts() {
   const { success } = await ratelimits.getPosts.limit(ip);
   if (!success) throw Error("TOO_MANY_REQUESTS");
 
+  const count = 50;
+
   const posts = await db
     .select()
     .from(schema.posts)
     .orderBy(desc(schema.posts.createdAt))
-    .limit(50);
+    .limit(count);
 
-  const promises = posts.map(async (post) => {
-    const author = await clerk.users.getUser(post.userId);
+  const { data: users } = await clerk.users.getUserList({
+    userId: posts.map((post) => post.userId),
+    limit: count,
+  });
+
+  return posts.map((post) => {
+    const author = users.find((user) => user.id === post.userId);
+
+    if (!author) return { ...post, author: null };
+
     return {
       ...post,
       author: {
@@ -37,8 +47,6 @@ export async function getPosts() {
       },
     };
   });
-
-  return Promise.all(promises);
 }
 
 export async function createPost(body: z.infer<typeof createPostSchema>) {

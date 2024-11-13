@@ -7,18 +7,26 @@ function Post(post: Awaited<ReturnType<typeof getPosts>>[number]) {
   return (
     <article className="flex flex-col gap-3 rounded-lg border p-3">
       <div className="flex items-center gap-3">
-        <div className="relative size-12 overflow-hidden rounded-full">
-          <Image
-            src={post.author.image}
-            alt={`@${post.author.username}'s profile picture`}
-            width={48}
-            height={48}
-          />
-        </div>
+        {post.author ? (
+          <div className="relative size-12 overflow-hidden rounded-full">
+            <Image
+              src={post.author.image}
+              alt={`@${post.author.username}'s profile picture`}
+              width={48}
+              height={48}
+            />
+          </div>
+        ) : (
+          <div className="size-12 rounded-full bg-muted" />
+        )}
         <div className="flex flex-col">
-          <p className="font-semibold">{post.author.name}</p>
+          <p className="font-semibold">
+            {post.author ? post.author.name : "Anonymous"}
+          </p>
           <p className="text-sm text-muted-foreground">
-            <span className="font-medium">@{post.author.username}</span>
+            <span className="font-medium">
+              @{post.author ? post.author.username : "anon"}
+            </span>
             &nbsp;•&nbsp;
             <span>{dayjs(post.createdAt).fromNow()}</span>
           </p>
