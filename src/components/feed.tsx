@@ -33,7 +33,7 @@ export default function Feed() {
   if (isError) {
     return (
       <div className="flex flex-col items-center text-muted-foreground">
-        <p>Something went wrong! 😱</p>
+        <p>Unable to load your feed! 😱</p>
         <p>Please try again later.</p>
       </div>
     );
