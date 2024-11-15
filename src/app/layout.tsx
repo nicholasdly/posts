@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 
+import Providers from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import "@/styles/globals.css";
@@ -22,8 +23,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={cn("antialiased", geist.className)}>
-          {children}
-          <Toaster theme="light" richColors />
+          <Providers>
+            {children}
+            <Toaster theme="light" richColors />
+          </Providers>
         </body>
       </html>
     </ClerkProvider>

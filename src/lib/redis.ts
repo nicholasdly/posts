@@ -4,7 +4,7 @@ import { env } from "@/env";
 import { Duration, Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-const redis = Redis.fromEnv();
+export const redis = Redis.fromEnv();
 
 /**
  * Helper function for creating a new `Ratelimit` instance using the sliding

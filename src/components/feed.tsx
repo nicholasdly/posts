@@ -1,46 +1,43 @@
-import Image from "next/image";
+"use client";
 
-import dayjs from "@/lib/dayjs";
-import { getPosts } from "@/server/actions";
+import { LoaderIcon } from "lucide-react";
 
-function Post(post: Awaited<ReturnType<typeof getPosts>>[number]) {
-  if (!post.author) {
-    return (
-      <article className="rounded-lg border bg-muted p-3">
-        <p className="text-muted-foreground">
-          This post is no longer available.
-        </p>
-      </article>
-    );
+import { Post as PostType } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+
+import Post from "./post";
+
+export default function Feed() {
+  const {
+    data: posts,
+    isPending,
+    isError,
+  } = useQuery({
+    queryKey: ["feed"],
+    queryFn: async () => {
+      const response = await fetch("/api/posts");
+
+      if (response.status === 429)
+        throw Error("Rate limit exceeded! Try again later.");
+      if (!response.ok) throw new Error("Something went wrong!");
+
+      return (await response.json()) as PostType[];
+    },
+    staleTime: Infinity,
+  });
+
+  if (isPending) {
+    return <LoaderIcon className="animate-spin text-muted-foreground" />;
   }
 
-  return (
-    <article className="flex flex-col gap-3 rounded-lg border p-3">
-      <div className="flex items-center gap-3">
-          <div className="relative size-12 overflow-hidden rounded-full">
-            <Image
-              src={post.author.image}
-              alt={`@${post.author.username}'s profile picture`}
-              width={48}
-              height={48}
-            />
-          </div>
-        <div className="flex flex-col">
-          <p className="font-semibold">{post.author.name}</p>
-          <p className="text-sm text-muted-foreground">
-            <span className="font-medium">@{post.author.username}</span>
-            &nbsp;•&nbsp;
-            <span>{dayjs(post.createdAt).fromNow()}</span>
-          </p>
-        </div>
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center text-muted-foreground">
+        <p>Something went wrong! 😱</p>
+        <p>Please try again later.</p>
       </div>
-      <p className="whitespace-pre-line">{post.content}</p>
-    </article>
-  );
-}
-
-export default async function Feed() {
-  const posts = await getPosts();
+    );
+  }
 
   if (posts.length === 0) {
     return (
