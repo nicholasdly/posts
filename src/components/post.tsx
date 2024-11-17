@@ -66,7 +66,7 @@ export default function Post(post: PostType) {
 
   return (
     <article
-      className="flex flex-col gap-3 rounded-lg border p-3 hover:cursor-pointer hover:bg-zinc-50"
+      className="flex flex-col gap-3 rounded-lg border p-3"
       // onClick={() => router.push(`/post/${post.id}`)}
     >
       <div className="flex items-center gap-3">
