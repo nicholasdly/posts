@@ -9,9 +9,13 @@ export default async function MainLayout({
   return (
     <div className="mx-auto max-w-lg p-4">
       <header className="mb-6 flex items-center justify-between">
-        <h1 className="flex items-baseline gap-2">
-          <span className="text-xl font-semibold">nicholasdly/posts</span>
-        </h1>
+        <Button variant="link" className="h-fit justify-self-start p-0" asChild>
+          <Link href="/">
+            <h1 className="flex items-baseline gap-2 text-xl font-semibold">
+              nicholasdly/posts
+            </h1>
+          </Link>
+        </Button>
         <SignedIn>
           <UserButton />
         </SignedIn>
